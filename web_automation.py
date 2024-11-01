@@ -1,21 +1,34 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
 
-# Set Chrome options
-chrome_options = Options()
-chrome_options.binary_location = "/usr/bin/google-chrome"  # Adjust this if the path differs
-chrome_options.add_argument("--headless")  # Optional, for headless mode
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
+# Step 1: Set up the Chrome WebDriver
+driver = webdriver.Chrome()  # Adjust path if ChromeDriver is not in your PATH
 
-# Specify the path to ChromeDriver
-service = Service("/home/nicole/.cache/selenium/chromedriver/linux64/130.0.6723.91/chromedriver")
-driver = webdriver.Chrome(service=service, options=chrome_options)
+# Step 2: Open the target website
+driver.get("https://the-internet.herokuapp.com/login")
 
-# Test by navigating to a page
-driver.get("https://www.example.com")
-print(driver.title)
+# Step 3: Locate the username and password fields
+username_input = driver.find_element(By.ID, "username")
+password_input = driver.find_element(By.ID, "password")
 
-# Close the browser
+# Step 4: Input login credentials
+username_input.send_keys("tomsmith")
+password_input.send_keys("SuperSecretPassword!")
+
+# Step 5: Submit the form
+password_input.send_keys(Keys.RETURN)
+
+# Step 6: Wait to observe the result
+time.sleep(3)  # Wait 3 seconds to see the logged-in screen
+
+# Step 7: Verify login success
+success_message = driver.find_element(By.ID, "flash")
+if "You logged into a secure area!" in success_message.text:
+    print("Login successful!")
+else:
+    print("Login failed!")
+
+# Step 8: Close the browser
 driver.quit()
